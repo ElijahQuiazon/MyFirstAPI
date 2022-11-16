@@ -1,5 +1,3 @@
 # MyFirstAPI
 My first API - Reddit. 
-
-<h1>The goal</h2>
-<p>To learn how to use an API to scrape data and build a product</p>
+The plan is to learn how to use an API to scrape data, which I will then use to build up a personal project!
