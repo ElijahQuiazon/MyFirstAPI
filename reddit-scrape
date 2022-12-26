@@ -1,0 +1,41 @@
+# Extract relevant submissions from reddit
+import praw
+import pandas as pd
+
+# step 1 - create instance of reddit
+reddit = praw.Reddit(client_id='BgP5JK5oQnNDU8DquLWYMA',
+                     client_secret='jw8yOZ4UkMCrM9AxzDH7ZZAMmvZkig',
+                     user_agent='ChurrosForLifeBaby',
+                     )
+
+# step 2 - create lists to store post_id, post title
+post_id = []
+post_title = []
+post_score = []
+post_description = []
+post_commentcount = []
+#post_comments = []
+
+# step 3 - locate target subreddits with keywords
+datingsubs = reddit.subreddit("all")
+date_ideas = datingsubs.search("virtual date", limit=None)
+
+# step 4 - iterate through date_ideas for id/title
+for post in date_ideas:
+    post_title.append(post.title)
+    post_id.append(post.id)
+    post_score.append(post.score)
+    post_description.append(post.selftext)
+    post_commentcount.append(post.num_comments)
+
+# step 5 - create dataframe
+column_names = {"post_id": post_id,
+                "post_score": post_score,
+                "num_of_comments": post_commentcount,
+                "post_title": post_title,
+                "post_description": post_description,
+                }
+postid_data = pd.DataFrame(column_names)
+
+# step 6 - export file to csv
+postid_data.to_csv("reddit_datesubmissions.csv", index=False)
