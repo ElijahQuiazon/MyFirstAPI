@@ -1,0 +1,40 @@
+# Retrieve comments from shortlisted post_ids
+import praw
+import pandas as pd
+
+# step 1 - create instance of reddit
+reddit = praw.Reddit(client_id='BgP5JK5oQnNDU8DquLWYMA',
+                     client_secret='jw8yOZ4UkMCrM9AxzDH7ZZAMmvZkig',
+                     user_agent='ChurrosForLifeBaby',
+                     )
+
+# step 2 - upload csv file with post ids
+shortlisted_posts = pd.read_csv("shortlist_postid.csv")
+
+
+# step 3 - create a list for comments
+comments = []
+score = []
+postid = []
+
+# step 4.1 - loop through each post_id record in the shortlisted post file
+for post_id in shortlisted_posts["post_id"]:
+    # step 4.2 - access post using the post_id
+    submission = reddit.submission(id=post_id)
+    # step 4.3 - use api to bypass 'load more comments' issue
+    submission.comments.replace_more(limit=None)
+    # step 4.4 - loop through each comment in the post and append it to the list
+    for comment in submission.comments:
+        comments.append(comment.body)
+        score.append(comment.score)
+        postid.append(comment.link_id)
+
+# step 5 - create a datafile
+retrieved_comments = pd.DataFrame({"post_id": postid,
+                                   "score": score,
+                                   "comments": comments
+                                   }
+                                  )
+
+# step 6 - export to csv, remove index
+retrieved_comments.to_csv("reddit_comments.csv", index=False)
